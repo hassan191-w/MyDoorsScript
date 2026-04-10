@@ -1,96 +1,125 @@
--- [[ KING HASSAN & HUSSEIN CUSTOM UI V6.0 ]]
-local CoreGui = game:GetService("CoreGui")
-local Players = game:GetService("Players")
-local lp = Players.LocalPlayer
+-- [[ HASSAN & HUSSEIN HUB V7.5 - THE ROYAL EDITION ]]
+local lp = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- [ 1. إنشاء حاوية الواجهة ]
-local HassanHubUI = Instance.new("ScreenGui", CoreGui)
-HassanHubUI.Name = "HassanHusseinUI"
+-- الملوك
+local hassan1, hassan2 = 10800492177, 3794073564
+local brotherID = 10800572782
 
--- [ 2. القائمة الرئيسية الملكية ]
-local MainFrame = Instance.new("Frame", HassanHubUI)
+-- متغيرات
+_G.FlyEnabled = false
+_G.SpeedEnabled = false
+local flySpeed = 60
+
+-- [ 1. إنشاء الواجهة ]
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "KingHassanFinal"
+
+local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 230, 0, 320)
 MainFrame.Position = UDim2.new(0.5, -115, 0.4, -160)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- خلفية سوداء فخمة
-MainFrame.BackgroundTransparency = 0.2 -- شفافية ملكية
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 2
-MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار ذهبي
+MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
 MainFrame.Active = true
-MainFrame.Draggable = true -- تحريك بإصبعك
-
--- [ 3. شعار الملوك ]
-local Crown = Instance.new("ImageLabel", MainFrame)
-Crown.Size = UDim2.new(0, 50, 0, 50)
-Crown.Position = UDim2.new(0.5, -25, 0, 5)
-Crown.Image = "rbxassetid://123456789" -- رابط شعار تاج حقيقي (تعديل)
-Crown.BackgroundTransparency = 1
+MainFrame.Draggable = true
 
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Position = UDim2.new(0, 0, 0, 60)
-Title.Text = "👑 ملوك دورس | V6.0"
-Title.TextColor3 = Color3.fromRGB(255, 215, 0) -- ذهبي
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Text = "👑 ملوك دورس V7.5"
+Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+Title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20; Title.TextStrokeTransparency = 0
+Title.TextSize = 20
 
--- [[ زر إغلاق متحرك ]]
-local CloseBtn = Instance.new("TextButton", MainFrame)
-CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-CloseBtn.Position = UDim2.new(1, -35, 0, 5)
-CloseBtn.Text = "X"; CloseBtn.TextColor3 = Color3.new(1, 1, 1)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); CloseBtn.BorderSizePixel = 0
-CloseBtn.MouseButton1Click:Connect(function() HassanHubUI:Destroy() end)
-
--- [[ 4. قسم الأزرار المدمجة ]]
-local ButtonFrame = Instance.new("ScrollingFrame", MainFrame)
-ButtonFrame.Size = UDim2.new(0.9, 0, 0, 200)
-ButtonFrame.Position = UDim2.new(0.05, 0, 0.35, 0)
-ButtonFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-ButtonFrame.BackgroundTransparency = 0.5
-ButtonFrame.BorderSizePixel = 0
-ButtonFrame.CanvasSize = UDim2.new(0, 0, 0, 300) -- مساحة الأزرار
-
--- وظيفة لإنشاء الأزرار الملكية
-local function CreateAdminBtn(name, callback)
-    local Btn = Instance.new("TextButton", ButtonFrame)
-    Btn.Size = UDim2.new(0.95, 0, 0, 45)
-    Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    Btn.TextColor3 = Color3.new(1, 1, 1)
-    Btn.Font = Enum.Font.Gotham; Btn.TextSize = 18
-    Btn.Text = name; Btn.BorderSizePixel = 1; Btn.BorderColor3 = Color3.fromRGB(255, 215, 0)
-    Btn.MouseButton1Click:Connect(callback)
-    Instance.new("UIListLayout", ButtonFrame).Padding = UDim.new(0, 5) -- ترتيب الأزرار
+-- [ 2. زر الاختفاء H ]
+local function ToggleUI()
+    MainFrame.Visible = not MainFrame.Visible
 end
 
--- [[ أدوات الملوك ]]
-CreateAdminBtn("🚀 تفعيل الهوية", function()
-    local ID = lp.UserId
-    if ID == 10800492177 or ID == 3794073564 then lp.DisplayName = "👑 الملك حسن"
-    elseif ID == 10800572782 then lp.DisplayName = "💎 الملك حسين" end
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zayn-Chat-195426"))()
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if not gpe and input.KeyCode == Enum.KeyCode.H then ToggleUI() end
 end)
 
-CreateAdminBtn("⚡ سرعة الملوك (150)", function()
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 150
-end)
+local H_Btn = Instance.new("TextButton", ScreenGui)
+H_Btn.Size = UDim2.new(0, 45, 0, 45)
+H_Btn.Position = UDim2.new(0, 5, 0.4, 0)
+H_Btn.Text = "H"; H_Btn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+H_Btn.TextColor3 = Color3.new(0,0,0)
+H_Btn.Font = Enum.Font.GothamBold
+H_Btn.MouseButton1Click:Connect(ToggleUI)
 
-CreateAdminBtn("🕊️ طيران حر", function()
-    local bv = Instance.new("BodyVelocity", lp.Character.PrimaryPart)
-    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * 100
-    task.wait(2)
-    bv:Destroy()
-end)
+-- [ 3. وظيفة الأزرار ]
+local function CreateBtn(name, pos, callback)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.Position = UDim2.new(0.05, 0, 0, pos)
+    btn.Text = name .. " [OFF]"
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.Gotham
+    
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        btn.Text = name .. (active and " [ON]" or " [OFF]")
+        btn.BackgroundColor3 = active and Color3.fromRGB(0, 120, 0) or Color3.fromRGB(45, 45, 45)
+        callback(active)
+    end)
+end
 
-CreateAdminBtn("🚪 كشف الأبواب ESP", function()
-    for _, obj in pairs(game.Workspace:GetDescendants()) do
-        if obj.Name == "Door" then
-            local b = Instance.new("BoxHandleAdornment", obj)
-            b.AlwaysOnTop = true; b.Adornee = obj; b.Size = Vector3.new(2,4,2); b.Color3 = Color3.new(0, 1, 0); b.Transparency = 0.5
-        end
+-- زر الهوية + شات Z
+CreateBtn("اللقب + شات Z", 60, function(v)
+    if v then
+        if lp.UserId == hassan1 or lp.UserId == hassan2 then lp.DisplayName = "👑 الملك حسن"
+        elseif lp.UserId == brotherID then lp.DisplayName = "💎 الملك حسين" end
+        pcall(function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zayn-Chat-195426"))() end)
+    else
+        lp.DisplayName = lp.Name
     end
 end)
 
-CreateAdminBtn("⚠️ تجربة الطرد", function()
-    lp:Kick("\n\n⚠️ تحديث تحديث يا ملك! ⚠️")
+-- زر الطيران الحر
+CreateBtn("الطيران الحر", 115, function(v)
+    _G.FlyEnabled = v
+    if v then
+        local bv = Instance.new("BodyVelocity", lp.Character.PrimaryPart)
+        bv.Name = "KingFlyV"; bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        local bg = Instance.new("BodyGyro", lp.Character.PrimaryPart)
+        bg.Name = "KingFlyG"; bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        
+        task.spawn(function()
+            while _G.FlyEnabled do
+                bg.CFrame = workspace.CurrentCamera.CFrame
+                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * flySpeed * (lp.Character.Humanoid.MoveDirection.Magnitude > 0 and 1 or 0)
+                if lp.Character.Humanoid.MoveDirection.Magnitude == 0 then bv.Velocity = Vector3.new(0,0.1,0) end
+                task.wait()
+            end
+            if lp.Character.PrimaryPart:FindFirstChild("KingFlyV") then lp.Character.PrimaryPart.KingFlyV:Destroy() end
+            if lp.Character.PrimaryPart:FindFirstChild("KingFlyG") then lp.Character.PrimaryPart.KingFlyG:Destroy() end
+        end)
+    end
 end)
+
+-- زر السرعة 150
+CreateBtn("السرعة 150", 170, function(v)
+    _G.SpeedEnabled = v
+    task.spawn(function()
+        while _G.SpeedEnabled do
+            if lp.Character and lp.Character:FindFirstChild("Humanoid") then
+                lp.Character.Humanoid.WalkSpeed = 150
+            end
+            task.wait(0.1)
+        end
+        lp.Character.Humanoid.WalkSpeed = 16
+    end)
+end)
+
+-- زر الإغلاق
+local X_Btn = Instance.new("TextButton", MainFrame)
+X_Btn.Size = UDim2.new(0.9, 0, 0, 40)
+X_Btn.Position = UDim2.new(0.05, 0, 0.85, 0)
+X_Btn.Text = "إغلاق نهائي X"
+X_Btn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+X_Btn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
