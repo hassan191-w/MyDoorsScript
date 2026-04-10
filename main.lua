@@ -1,11 +1,11 @@
--- [[ KING HASSAN & HUSSEIN HUB - V3.5 ]]
+-- [[ KING HASSAN & HUSSEIN HUB - V3.6 FIXED ]]
 local lp = game.Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
 -- معرفات الحسابات الملكية
 local hassan1 = 10800492177
 local hassan2 = 3794073564
-local brotherID = 10800572782 -- حساب حسين (تمت الإضافة ✅)
+local brotherID = 10800572782 
 
 -- متغيرات التحكم
 _G.SpeedEnabled = false
@@ -17,24 +17,129 @@ local flySpeed = 50
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "👑 لوحة تحكم الإخوة | V3.5",
-   LoadingTitle = "جاري التحقق من هوية الملوك...",
-   LoadingSubtitle = "Hassan & Hussein System",
-   ConfigurationSaving = { Enabled = true, FolderName = "HassanHusseinHub" }
+   Name = "👑 لوحة تحكم الملوك | V3.6",
+   LoadingTitle = "جاري تفعيل الأنظمة الملكية...",
+   LoadingSubtitle = "Hassan & Hussein Hub",
+   ConfigurationSaving = { Enabled = true, FolderName = "HassanHusseinFinal" }
 })
 
--- [[ التبويبات ]]
+-- ==========================================
+-- [ 1. قسم الشات والألقاب - أول تبويب ]
+-- ==========================================
 local ChatTab = Window:CreateTab("الشات والألقاب 💬", 4483362458)
-local MainTab = Window:CreateTab("الميزات الخارقة ⚡", 4483345998)
-local AdminTab;
+
+ChatTab:CreateButton({
+   Name = "🚀 تفعيل Zayn Chat + اللقب الملكي",
+   Callback = function()
+       -- تفعيل اللقب
+       if lp.UserId == hassan1 or lp.UserId == hassan2 then 
+           lp.DisplayName = "👑 الملك حسن"
+       elseif lp.UserId == brotherID then 
+           lp.DisplayName = "💎 الملك حسين" 
+       end
+       -- تفعيل سكربت الشات
+       pcall(function() 
+           loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zayn-Chat-195426"))() 
+       end)
+       Rayfield:Notify({Title = "النظام الملكي", Content = "تم تفعيل الشات واللقب بنجاح!", Duration = 3})
+   end,
+})
 
 -- ==========================================
--- [ 1. الشات والألقاب ]
+-- [ 2. الميزات الخارقة (سرعة + طيران) ]
 -- ==========================================
-ChatTab:CreateButton({
-   Name = "🚀 تفعيل Zayn Chat والألقاب الملكية",
-   Callback = function()
-       if lp.UserId == hassan1 or lp.UserId == hassan2 then 
+local MainTab = Window:CreateTab("الميزات الخارقة ⚡", 4483345998)
+
+MainTab:CreateToggle({
+   Name = "تفعيل السرعة الإجبارية",
+   CurrentValue = false,
+   Callback = function(v) _G.SpeedEnabled = v end,
+})
+
+MainTab:CreateSlider({
+   Name = "مقدار السرعة", Range = {16, 250}, Increment = 1, CurrentValue = 16,
+   Callback = function(v) _G.TargetSpeed = v end,
+})
+
+-- نظام الطيران الحر (تحكم كامل)
+MainTab:CreateToggle({
+   Name = "طيران حر (Free Fly)",
+   CurrentValue = false,
+   Callback = function(v)
+       _G.Flying = v
+       if v then
+           local bg = Instance.new("BodyGyro", lp.Character.PrimaryPart)
+           bg.P = 9e4; bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9); bg.CFrame = lp.Character.PrimaryPart.CFrame
+           local bv = Instance.new("BodyVelocity", lp.Character.PrimaryPart)
+           bv.Velocity = Vector3.new(0, 0, 0); bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+           
+           task.spawn(function()
+               while _G.Flying do
+                   bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * flySpeed * (lp.Character.Humanoid.MoveDirection.Magnitude > 0 and 1 or 0)
+                   bg.CFrame = workspace.CurrentCamera.CFrame
+                   task.wait()
+               end
+               bg:Destroy(); bv:Destroy()
+           end)
+       end
+   end,
+})
+
+MainTab:CreateSlider({
+   Name = "سرعة الطيران", Range = {10, 300}, Increment = 5, CurrentValue = 50,
+   Callback = function(v) flySpeed = v end,
+})
+
+-- ==========================================
+-- [ 3. قسم الإدارة (للملوك فقط) ]
+-- ==========================================
+if lp.UserId == hassan1 or lp.UserId == hassan2 or lp.UserId == brotherID then
+    local AdminTab = Window:CreateTab("👑 إدارة الملوك", 4483362458)
+    
+    AdminTab:CreateToggle({
+        Name = "اختراق الجدران (Noclip)",
+        CurrentValue = false,
+        Callback = function(v) _G.NoclipActive = v end,
+    })
+
+    AdminTab:CreateButton({
+        Name = "⚠️ تجربة الطرد (تحديث تحديث)",
+        Callback = function() lp:Kick("\n\nتحديث تحديث تحديث\n\n⚠️ يرجى استخدام النسخة الجديدة ⚠️") end,
+    })
+end
+
+-- [[ الأنظمة الخلفية لضمان الثبات ]]
+RunService.Heartbeat:Connect(function()
+    if _G.SpeedEnabled and lp.Character and lp.Character:FindFirstChild("Humanoid") then
+        lp.Character.Humanoid.WalkSpeed = _G.TargetSpeed
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    if _G.NoclipActive and lp.Character then
+        for _, p in pairs(lp.Character:GetDescendants()) do
+            if p:IsA("BasePart") then p.CanCollide = false end
+        end
+    end
+end)
+
+-- لقب فوق الرأس دائم
+task.spawn(function()
+    while task.wait(1) do
+        pcall(function()
+            if lp.Character and lp.Character:FindFirstChild("Head") and not lp.Character.Head:FindFirstChild("HassanTag") then
+                local title = (lp.UserId == hassan1 or lp.UserId == hassan2) and "👑 الملك حسن" or (lp.UserId == brotherID and "💎 الملك حسين" or "")
+                if title ~= "" then
+                    local b = Instance.new("BillboardGui", lp.Character.Head)
+                    b.Name = "HassanTag"; b.Size = UDim2.new(0, 200, 0, 50); b.StudsOffset = Vector3.new(0, 3, 0); b.AlwaysOnTop = true
+                    local l = Instance.new("TextLabel", b)
+                    l.Size = UDim2.new(1, 0, 1, 0); l.BackgroundTransparency = 1; l.Text = title; l.TextColor3 = Color3.fromRGB(255, 215, 0)
+                    l.Font = Enum.Font.GothamBold; l.TextSize = 25; l.TextStrokeTransparency = 0
+                end
+            end
+        end)
+    end
+end)       if lp.UserId == hassan1 or lp.UserId == hassan2 then 
            lp.DisplayName = "👑 الملك حسن"
        elseif lp.UserId == brotherID then 
            lp.DisplayName = "💎 الملك حسين" 
