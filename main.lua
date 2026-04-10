@@ -1,70 +1,78 @@
--- [[ KING HASSAN ULTIMATE HUB - النسخة المعتمدة ]]
+-- [[-- [[ KING HASSAN ULTIMATE HUB - ADMIN EDITION ]]
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local hassan1 = 10800492177 -- حسابك الأول
+local hassan2 = 3794073564  -- حسابك الثاني
+local lp = game.Players.LocalPlayer
 
 local Window = Rayfield:CreateWindow({
    Name = "👑 لوحة تحكم الملك حسن",
-   LoadingTitle = "جاري التحقق من الهوية الملكية...",
-   LoadingSubtitle = "Zayn Chat + Doors Rayfield",
-   ConfigurationSaving = { Enabled = true, FolderName = "HassanZaynHub" }
+   LoadingTitle = "جاري التحقق من الصلاحيات الملكية...",
+   LoadingSubtitle = "Admin Access System",
+   ConfigurationSaving = { Enabled = true, FolderName = "HassanAdmin" }
 })
 
--- معرفات الحسابات الخاصة بك (ID)
-local hassan1 = 10800492177 -- حسابك الأول
-local hassan2 = 3794073564  -- حسابك الثاني (الجديد)
-local brotherID = 10800572782 -- حساب أخوك حسين
-
-local lp = game.Players.LocalPlayer
-
--- إنشاء التبويبات
+-- التبويبات العادية للكل
 local ChatTab = Window:CreateTab("سكربت الشات 💬", 4483362458)
 local DoorsTab = Window:CreateTab("سكربت دورس 🚪", 4483345998)
 
--- ==========================================
--- [ قسم الشات - Zayn Chat مع الألقاب ]
--- ==========================================
+-- [ قسم الشات ]
 ChatTab:CreateButton({
-   Name = "🚀 تفعيل Zayn Chat والألقاب الملكية",
+   Name = "🚀 تفعيل Zayn Chat",
    Callback = function()
-       -- تعديل الـ DisplayName بناءً على الـ ID
-       if lp.UserId == hassan1 or lp.UserId == hassan2 then
-           lp.DisplayName = "👑 الملك حسن"
-       elseif lp.UserId == brotherID then
-           lp.DisplayName = "💎 أخو المالك"
-       end
-
-       -- تشغيل Zayn Chat
-       pcall(function()
-           loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zayn-Chat-195426"))()
-       end)
-       Rayfield:Notify({Title = "تم التفعيل", Content = "الألقاب والدردشة جاهزة!", Duration = 3})
+       pcall(function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zayn-Chat-195426"))() end)
    end,
 })
 
--- ==========================================
--- [ قسم دورس - الميزات ]
--- ==========================================
+-- [ قسم دورس ]
 DoorsTab:CreateSlider({
-   Name = "السرعة", Range = {16, 100}, Increment = 1, CurrentValue = 16,
-   Callback = function(v) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v end,
-})
-
-DoorsTab:CreateToggle({
-   Name = "اختراق الجدران (Noclip)", CurrentValue = false,
-   Callback = function(v)
-       _G.Noclip = v
-       game:GetService("RunService").Stepped:Connect(function()
-           if _G.Noclip and game.Players.LocalPlayer.Character then
-               for _, p in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                   if p:IsA("BasePart") then p.CanCollide = false end
-               end
-           end
-       end)
-   end,
+   Name = "السرعة", Range = {16, 150}, Increment = 1, CurrentValue = 16,
+   Callback = function(v) lp.Character.Humanoid.WalkSpeed = v end,
 })
 
 -- ==========================================
--- نظام اللقب فوق الرأس (للحسابين)
+-- القائمة السرية (ADMIN ONLY)
 -- ==========================================
+if lp.UserId == hassan1 or lp.UserId == hassan2 then
+    local AdminTab = Window:CreateTab("👑 إدارة الملك (خاص)", 4483362458)
+    
+    AdminTab:CreateSection("ميزات المسؤول")
+
+    AdminTab:CreateButton({
+        Name = "تدمير الجاذبية (Fly/No Grav)",
+        Callback = function()
+            game.Workspace.Gravity = 0
+            Rayfield:Notify({Title = "Admin", Content = "تم إيقاف الجاذبية للملك!", Duration = 3})
+        end,
+    })
+
+    AdminTab:CreateButton({
+        Name = "إعادة الجاذبية",
+        Callback = function()
+            game.Workspace.Gravity = 196.2
+        end,
+    })
+
+    AdminTab:CreateButton({
+        Name = "كشف أماكن اللاعبين (ESP)",
+        Callback = function()
+            -- كود بسيط للكشف
+            for _, v in pairs(game.Players:GetPlayers()) do
+                if v ~= lp and v.Character and v.Character:FindFirstChild("Head") then
+                    local bgui = Instance.new("BillboardGui", v.Character.Head)
+                    bgui.Size = UDim2.new(0, 200, 0, 50); bgui.AlwaysOnTop = true
+                    local tl = Instance.new("TextLabel", bgui)
+                    tl.Size = UDim2.new(1, 0, 1, 0); tl.Text = v.Name; tl.TextColor3 = Color3.fromRGB(255, 0, 0); tl.BackgroundTransparency = 1
+                end
+            end
+        end,
+    })
+    
+    Rayfield:Notify({Title = "مرحباً أيها الملك", Content = "تم تفعيل قائمة الأدمن الخاصة بك.", Duration = 5})
+end
+-- ==========================================
+
+-- لقب الملك فوق الرأس
 local function AddHeadTag()
     if (lp.UserId == hassan1 or lp.UserId == hassan2) and lp.Character and lp.Character:FindFirstChild("Head") then
         if not lp.Character.Head:FindFirstChild("HassanTag") then
@@ -76,9 +84,4 @@ local function AddHeadTag()
         end
     end
 end
-
-task.spawn(function()
-    while task.wait(1) do AddHeadTag() end
-end)
-
-Rayfield:Notify({Title = "أهلاً يا ملك!", Content = "تم التعرف على حسابك بنجاح.", Duration = 5})
+task.spawn(function() while task.wait(1) do AddHeadTag() end end)
