@@ -1,70 +1,86 @@
--- [[ KING HASSAN ULTIMATE HUB - DOORS PRO EDITION ]]
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-local hassan1 = 10800492177
-local hassan2 = 3794073564 
+-- [[ KING HASSAN ULTIMATE HUB - V2.5 ]]
+local currentVersion = "2.5" 
 local lp = game.Players.LocalPlayer
+local hassan1 = 10800492177
+local hassan2 = 3794073564
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "👑 لوحة تحكم الملك حسن",
-   LoadingTitle = "جاري تحميل ميزات دورس الخارقة...",
-   LoadingSubtitle = "Hassan Custom Edition",
-   ConfigurationSaving = { Enabled = true, FolderName = "HassanPro" }
+   LoadingTitle = "جاري تحميل النظام الملكي...",
+   LoadingSubtitle = "Admin & Pro Features",
+   ConfigurationSaving = { Enabled = true, FolderName = "HassanV25" }
 })
 
-local DoorsTab = Window:CreateTab("سكربت دورس PRO 🚪", 4483345998)
-local AdminTab; -- تعريف متغير للأدمن
+-- التبويبات الأساسية
+local MainTab = Window:CreateTab("الميزات العامة ⚡", 4483345998)
+local DoorsTab = Window:CreateTab("دورس PRO 🚪", 4483345998)
 
--- [ قسم ميزات دورس ]
-DoorsTab:CreateSection("التحركات")
-
-DoorsTab:CreateSlider({
-   Name = "السرعة", Range = {16, 100}, Increment = 1, CurrentValue = 16,
+-- [ ميزات الحركة ]
+MainTab:CreateSlider({
+   Name = "السرعة", Range = {16, 150}, Increment = 1, CurrentValue = 16,
    Callback = function(v) lp.Character.Humanoid.WalkSpeed = v end,
 })
 
-DoorsTab:CreateToggle({
-   Name = "إضاءة كاملة (FullBright)", CurrentValue = false,
+MainTab:CreateToggle({
+   Name = "اختراق الجدران (Noclip)",
+   CurrentValue = false,
    Callback = function(v)
-       if v then game:GetService("Lighting").Brightness = 2; game:GetService("Lighting").ClockTime = 14
-       else game:GetService("Lighting").Brightness = 1; game:GetService("Lighting").ClockTime = 0 end
-   end,
-})
-
-DoorsTab:CreateSection("الكشف (ESP)")
-
-DoorsTab:CreateButton({
-   Name = "كشف الأبواب والمفاتيح",
-   Callback = function()
-       -- كود كشف الأغراض في دورس
-       for _, obj in pairs(game.Workspace.CurrentRooms:GetDescendants()) do
-           if obj.Name == "Door" or obj.Name == "Key" then
-               local b = Instance.new("BoxHandleAdornment", obj)
-               b.AlwaysOnTop = true; b.Adornee = obj; b.Size = Vector3.new(2,2,2); b.Color3 = Color3.fromRGB(0, 255, 0); b.Transparency = 0.5
+       _G.Noclip = v
+       game:GetService("RunService").Stepped:Connect(function()
+           if _G.Noclip and lp.Character then
+               for _, p in pairs(lp.Character:GetDescendants()) do
+                   if p:IsA("BasePart") then p.CanCollide = false end
+               end
            end
-       end
-       Rayfield:Notify({Title = "ESP", Content = "تم تحديد أماكن الأبواب والمفاتيح", Duration = 3})
+       end)
    end,
 })
 
-DoorsTab:CreateToggle({
-   Name = "إزالة الضباب", CurrentValue = false,
-   Callback = function(v)
-       if v then game:GetService("Lighting").FogEnd = 100000
-       else game:GetService("Lighting").FogEnd = 1000 end
+-- [ ميزات دورس ]
+DoorsTab:CreateButton({
+   Name = "إضاءة كاملة (FullBright)",
+   Callback = function()
+       game:GetService("Lighting").Brightness = 2
+       game:GetService("Lighting").ClockTime = 14
+       game:GetService("Lighting").FogEnd = 100000
    end,
 })
 
--- [ قسم الإدارة - خاص بحسن فقط ]
+-- ==========================================
+-- [ قسم الأدمن السري - للملك حسن فقط ]
+-- ==========================================
 if lp.UserId == hassan1 or lp.UserId == hassan2 then
-    AdminTab = Window:CreateTab("👑 إدارة الملك", 4483362458)
+    local AdminTab = Window:CreateTab("👑 إدارة الملك", 4483362458)
+    
+    AdminTab:CreateSection("تجربة النظام")
+
     AdminTab:CreateButton({
-        Name = "تخطي الغرفة (قريباً)",
-        Callback = function() Rayfield:Notify({Title="Admin", Content="جاري العمل على ميزة التخطي التلقائي", Duration=3}) end
+        Name = "🚀 تفعيل الطيران (Fly)",
+        Callback = function()
+            local bv = Instance.new("BodyVelocity", lp.Character.PrimaryPart)
+            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bv.Velocity = Vector3.new(0, 50, 0)
+            wait(0.5)
+            bv:Destroy()
+        end,
     })
+
+    AdminTab:CreateSection("اختبارات التحديث")
+
+    AdminTab:CreateButton({
+        Name = "⚠️ تجربة الطرد (Fake Update)",
+        Callback = function()
+            -- هاد الزر رح يطرد اللي بضغط عليه (عشان تجرب الرسالة)
+            lp:Kick("\n\n👑 نظام الملك حسن 👑\n\nعذراً، أنت تستخدم نسخة قديمة!\nيرجى الدخول للديسكورد أو يوتيوب لتحميل V3.0\n\n")
+        end,
+    })
+    
+    AdminTab:CreateLabel("ملاحظة: زر الطرد للاختبار فقط")
 end
 
--- لقب الملك فوق الرأس (دائم)
+-- [ لقب الملك فوق الرأس ]
 local function AddHeadTag()
     if (lp.UserId == hassan1 or lp.UserId == hassan2) and lp.Character and lp.Character:FindFirstChild("Head") then
         if not lp.Character.Head:FindFirstChild("HassanTag") then
@@ -77,3 +93,5 @@ local function AddHeadTag()
     end
 end
 task.spawn(function() while task.wait(1) do AddHeadTag() end end)
+
+Rayfield:Notify({Title = "أهلاً يا ملك", Content = "تم تفعيل ميزات الأدمن بنجاح!", Duration = 5})
